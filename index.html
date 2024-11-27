@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Grafana</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            flex-direction: column;
+        }
+        iframe {
+            border: none;
+            width: 90%;
+            height: 70vh;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Incrusta aquí tu Dashboard de Grafana -->
+    <iframe 
+        src="http://localhost:3000/public-dashboards/9936d1d3430b412dbac18d764c4f63cd?theme=light" 
+        title="Dashboard de Grafana">
+    </iframe>
+
+    <!-- Botón para controlar el LED -->
+    <button id="ledButton" onclick="toggleLED()">Encender LED</button>
+
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script>
+        // Conexión al broker MQTT
+        const client = mqtt.connect('wss://n1781645.ala.us-east-1.emqxsl.com:8084/mqtt');  // Usamos WebSocket en lugar de TCP para navegador
+
+        // Función de callback para la conexión MQTT
+        client.on('connect', function () {
+            console.log('Conectado al broker MQTT');
+        });
+
+        // Publicar mensaje para encender o apagar el LED
+        function toggleLED() {
+            let message = 'on';  // Cambiar a 'off' si necesitas apagar
+            client.publish('test/led1', message, { qos: 2, retain: true }, function () {
+                console.log('Mensaje enviado:', message);
+            });
+        }
+    </script>
+</body>
+</html>
